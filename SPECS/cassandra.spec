@@ -12,7 +12,7 @@ Source4:	cassandra.logrotate
 Source5:	storage-conf.xml
 Source6:	log4j.properties
 Source7:	log4j-tools.properties
-Patch0:		verve-commands.patch
+Patch0:		commands.patch
 Url:		http://cassandra.apache.org/
 BuildRoot:	%{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 BuildArch:	noarch
