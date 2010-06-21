@@ -1,0 +1,280 @@
+diff -urP apache-cassandra-0.6.1-src.orig/bin/cassandra apache-cassandra-0.6.1-src/bin/cassandra
+--- apache-cassandra-0.6.1-src.orig/bin/cassandra	2010-04-15 06:18:47.000000000 -0700
++++ apache-cassandra-0.6.1-src/bin/cassandra	2010-05-10 10:38:20.000000000 -0700
+@@ -60,33 +60,22 @@
+ # Be aware that you will be entirely responsible for populating the needed
+ # environment variables.
+ 
+-# If an include wasn't specified in the environment, then search for one...
+-if [ "x$CASSANDRA_INCLUDE" = "x" ]; then
+-    # Locations (in order) to use when searching for an include file.
+-    for include in /usr/share/cassandra/cassandra.in.sh \
+-                   /usr/local/share/cassandra/cassandra.in.sh \
+-                   /opt/cassandra/cassandra.in.sh \
+-                   ~/.cassandra.in.sh \
+-                   `dirname $0`/cassandra.in.sh; do
+-        if [ -r $include ]; then
+-            . $include
+-            break
+-        fi
+-    done
+-# ...otherwise, source the specified include.
+-elif [ -r $CASSANDRA_INCLUDE ]; then
+-    . $CASSANDRA_INCLUDE
++if [ -r /usr/java/cassandra/share/cassandra.rc ]; then
++    . /usr/java/cassandra/share/cassandra.rc
+ fi
+ 
+-# Use JAVA_HOME if set, otherwise look for java in PATH
+-if [ -x $JAVA_HOME/bin/java ]; then
+-    JAVA=$JAVA_HOME/bin/java
+-else
+-    JAVA=`which java`
++if [ -z $JAVA ]; then
++    echo "You must set JAVA" >&2
++    exit 1
++fi
++
++if [ -z $CLASSPATH ]; then
++    echo "You must set CLASSPATH" >&2
++    exit 1
+ fi
+ 
+-if [ -z $CASSANDRA_CONF -o -z $CLASSPATH ]; then
+-    echo "You must set the CASSANDRA_CONF and CLASSPATH vars" >&2
++if [ -z $CASSANDRA_CONF ]; then
++    echo "You must set CASSANDRA_CONF" >&2
+     exit 1
+ fi
+ 
+diff -urP apache-cassandra-0.6.1-src.orig/bin/cassandra-cli apache-cassandra-0.6.1-src/bin/cassandra-cli
+--- apache-cassandra-0.6.1-src.orig/bin/cassandra-cli	2010-04-15 06:18:47.000000000 -0700
++++ apache-cassandra-0.6.1-src/bin/cassandra-cli	2010-05-10 10:38:20.000000000 -0700
+@@ -16,33 +16,20 @@
+ # See the License for the specific language governing permissions and
+ # limitations under the License.
+ 
+-if [ "x$CASSANDRA_INCLUDE" = "x" ]; then
+-    for include in /usr/share/cassandra/cassandra.in.sh \
+-                   /usr/local/share/cassandra/cassandra.in.sh \
+-                   /opt/cassandra/cassandra.in.sh \
+-                   ~/.cassandra.in.sh \
+-                   `dirname $0`/cassandra.in.sh; do
+-        if [ -r $include ]; then
+-            . $include
+-            break
+-        fi
+-    done
+-elif [ -r $CASSANDRA_INCLUDE ]; then
+-    . $CASSANDRA_INCLUDE
+-fi
+-
+-# Use JAVA_HOME if set, otherwise look for java in PATH
+-if [ -x $JAVA_HOME/bin/java ]; then
+-    JAVA=$JAVA_HOME/bin/java
+-else
+-    JAVA=`which java`
++if [ -r /usr/java/cassandra/share/cassandra.rc ]; then
++    . /usr/java/cassandra/share/cassandra.rc
+ fi
+ 
++if [ -z $JAVA ]; then
++    echo "You must set JAVA" >&2
++    exit 1
++fi  
++             
+ if [ -z $CLASSPATH ]; then
+-    echo "You must set the CLASSPATH var" >&2
++    echo "You must set CLASSPATH" >&2
+     exit 1
+ fi
+-
++ 
+ $JAVA -ea -cp $CLASSPATH \
+         -Dlog4j.configuration=log4j-tools.properties \
+         org.apache.cassandra.cli.CliMain "$@"
+diff -urP apache-cassandra-0.6.1-src.orig/bin/json2sstable apache-cassandra-0.6.1-src/bin/json2sstable
+--- apache-cassandra-0.6.1-src.orig/bin/json2sstable	2010-04-15 06:18:47.000000000 -0700
++++ apache-cassandra-0.6.1-src/bin/json2sstable	2010-05-10 10:38:20.000000000 -0700
+@@ -16,30 +16,22 @@
+ # See the License for the specific language governing permissions and
+ # limitations under the License.
+ 
+-if [ "x$CASSANDRA_INCLUDE" = "x" ]; then
+-    for include in /usr/share/cassandra/cassandra.in.sh \
+-                   /usr/local/share/cassandra/cassandra.in.sh \
+-                   /opt/cassandra/cassandra.in.sh \
+-                   ~/.cassandra.in.sh \
+-                   `dirname $0`/cassandra.in.sh; do
+-        if [ -r $include ]; then
+-            . $include
+-            break
+-        fi
+-    done
+-elif [ -r $CASSANDRA_INCLUDE ]; then
+-    . $CASSANDRA_INCLUDE
+-fi
+-
+-# Use JAVA_HOME if set, otherwise look for java in PATH
+-if [ -x $JAVA_HOME/bin/java ]; then
+-    JAVA=$JAVA_HOME/bin/java
+-else
+-    JAVA=`which java`
++if [ -r /usr/java/cassandra/share/cassandra.rc ]; then
++    . /usr/java/cassandra/share/cassandra.rc
+ fi
+ 
++if [ -z $JAVA ]; then
++    echo "You must set JAVA" >&2
++    exit 1
++fi  
++             
+ if [ -z $CLASSPATH ]; then
+-    echo "You must set the CLASSPATH var" >&2
++    echo "You must set CLASSPATH" >&2
++    exit 1
++fi
++                      
++if [ -z $CASSANDRA_CONF ]; then
++    echo "You must set CASSANDRA_CONF" >&2
+     exit 1
+ fi
+ 
+diff -urP apache-cassandra-0.6.1-src.orig/bin/nodeprobe apache-cassandra-0.6.1-src/bin/nodeprobe
+--- apache-cassandra-0.6.1-src.orig/bin/nodeprobe	2010-04-15 06:18:47.000000000 -0700
++++ apache-cassandra-0.6.1-src/bin/nodeprobe	2010-05-10 10:38:20.000000000 -0700
+@@ -21,29 +21,22 @@
+     echo "***************************************************************" >&2
+ fi
+ 
+-if [ "x$CASSANDRA_INCLUDE" = "x" ]; then
+-    for include in /usr/share/cassandra/cassandra.in.sh \
+-                   /usr/local/share/cassandra/cassandra.in.sh \
+-                   /opt/cassandra/cassandra.in.sh \
+-                   `dirname $0`/cassandra.in.sh; do
+-        if [ -r $include ]; then
+-            . $include
+-            break
+-        fi
+-    done
+-elif [ -r $CASSANDRA_INCLUDE ]; then
+-    . $CASSANDRA_INCLUDE
++if [ -r /usr/java/cassandra/share/cassandra.rc ]; then
++    . /usr/java/cassandra/share/cassandra.rc
+ fi
+ 
+-# Use JAVA_HOME if set, otherwise look for java in PATH
+-if [ -x $JAVA_HOME/bin/java ]; then
+-    JAVA=$JAVA_HOME/bin/java
+-else
+-    JAVA=`which java`
++if [ -z $JAVA ]; then
++    echo "You must set JAVA" >&2
++    exit 1
++fi  
++             
++if [ -z $CLASSPATH ]; then
++    echo "You must set CLASSPATH" >&2
++    exit 1
+ fi
+-
+-if [ -z $CASSANDRA_CONF -o -z $CLASSPATH ]; then
+-    echo "You must set the CASSANDRA_CONF and CLASSPATH vars" >&2
++                      
++if [ -z $CASSANDRA_CONF ]; then
++    echo "You must set CASSANDRA_CONF" >&2
+     exit 1
+ fi
+ 
+diff -urP apache-cassandra-0.6.1-src.orig/bin/nodetool apache-cassandra-0.6.1-src/bin/nodetool
+--- apache-cassandra-0.6.1-src.orig/bin/nodetool	2010-04-15 06:18:47.000000000 -0700
++++ apache-cassandra-0.6.1-src/bin/nodetool	2010-05-10 10:40:25.000000000 -0700
+@@ -21,29 +21,22 @@
+     echo "***************************************************************" >&2
+ fi
+ 
+-if [ "x$CASSANDRA_INCLUDE" = "x" ]; then
+-    for include in /usr/share/cassandra/cassandra.in.sh \
+-                   /usr/local/share/cassandra/cassandra.in.sh \
+-                   /opt/cassandra/cassandra.in.sh \
+-                   `dirname $0`/cassandra.in.sh; do
+-        if [ -r $include ]; then
+-            . $include
+-            break
+-        fi
+-    done
+-elif [ -r $CASSANDRA_INCLUDE ]; then
+-    . $CASSANDRA_INCLUDE
++if [ -r /usr/java/cassandra/share/cassandra.rc ]; then
++    . /usr/java/cassandra/share/cassandra.rc
+ fi
+ 
+-# Use JAVA_HOME if set, otherwise look for java in PATH
+-if [ -x $JAVA_HOME/bin/java ]; then
+-    JAVA=$JAVA_HOME/bin/java
+-else
+-    JAVA=`which java`
++if [ -z $JAVA ]; then
++    echo "You must set JAVA" >&2
++    exit 1
++fi  
++             
++if [ -z $CLASSPATH ]; then
++    echo "You must set CLASSPATH" >&2
++    exit 1
+ fi
+-
+-if [ -z $CASSANDRA_CONF -o -z $CLASSPATH ]; then
+-    echo "You must set the CASSANDRA_CONF and CLASSPATH vars" >&2
++                      
++if [ -z $CASSANDRA_CONF ]; then
++    echo "You must set CASSANDRA_CONF" >&2
+     exit 1
+ fi
+ 
+diff -urP apache-cassandra-0.6.1-src.orig/bin/sstable2json apache-cassandra-0.6.1-src/bin/sstable2json
+--- apache-cassandra-0.6.1-src.orig/bin/sstable2json	2010-04-15 06:18:47.000000000 -0700
++++ apache-cassandra-0.6.1-src/bin/sstable2json	2010-05-10 10:38:20.000000000 -0700
+@@ -16,31 +16,22 @@
+ # See the License for the specific language governing permissions and
+ # limitations under the License.
+ 
+-if [ "x$CASSANDRA_INCLUDE" = "x" ]; then
+-    for include in /usr/share/cassandra/cassandra.in.sh \
+-                   /usr/local/share/cassandra/cassandra.in.sh \
+-                   /opt/cassandra/cassandra.in.sh \
+-                   ~/.cassandra.in.sh \
+-                   `dirname $0`/cassandra.in.sh; do
+-        if [ -r $include ]; then
+-            . $include
+-            break
+-        fi
+-    done
+-elif [ -r $CASSANDRA_INCLUDE ]; then
+-    . $CASSANDRA_INCLUDE
++if [ -r /usr/java/cassandra/share/cassandra.rc ]; then
++    . /usr/java/cassandra/share/cassandra.rc
+ fi
+ 
+-
+-# Use JAVA_HOME if set, otherwise look for java in PATH
+-if [ -x $JAVA_HOME/bin/java ]; then
+-    JAVA=$JAVA_HOME/bin/java
+-else
+-    JAVA=`which java`
++if [ -z $JAVA ]; then
++    echo "You must set JAVA" >&2
++    exit 1
+ fi
+ 
+ if [ -z $CLASSPATH ]; then
+-    echo "You must set the CLASSPATH var" >&2
++    echo "You must set CLASSPATH" >&2
++    exit 1
++fi
++
++if [ -z $CASSANDRA_CONF ]; then
++    echo "You must set CASSANDRA_CONF" >&2
+     exit 1
+ fi
+ 

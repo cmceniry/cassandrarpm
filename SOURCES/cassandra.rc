@@ -1,0 +1,33 @@
+#!/bin/sh
+
+if [ "x$CASSANDRA_INCLUDE" = "x" ]; then
+    for include in ./cassandra.in.sh \
+                   ~/.cassandrarc \
+                   /etc/sysconfig/cassandra; do
+        if [ -r $include ]; then
+            . $include
+            break
+        fi
+    done
+elif [ -r $CASSANDRA_INCLUDE ]; then
+    . $CASSANDRA_INCLUDE
+fi
+
+if [ -z $CLASSPATH ]; then
+    CLASSPATH=$CASSANDRA_CONF
+else
+    CLASSPATH=$CLASSPATH:$CASSANDRA_CONF
+fi
+for jar in $CASSANDRA_HOME/lib/*.jar; do
+    CLASSPATH=$CLASSPATH:$jar
+done
+
+
+# Use JAVA_HOME if set, otherwise look for java in PATH
+if [ -x $JAVA_HOME/bin/java ]; then
+    JAVA=$JAVA_HOME/bin/java
+else
+    JAVA=`which java`
+fi
+
+# vi:ai sw=4 ts=4 tw=0 et
